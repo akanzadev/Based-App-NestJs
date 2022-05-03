@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+  mysql:
+    container_name: mysql-container
+    image: mysql:5
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: monokuma_delivery
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: phpmyadmin-container
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_USER: root
+      PMA_PASSWORD: 123456
+      PMA_HOST: mysql
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
