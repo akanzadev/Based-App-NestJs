@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
 import { DateAt } from './dateAt.entity';
 
 @Entity()

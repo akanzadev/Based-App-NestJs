@@ -10,18 +10,22 @@ import { PartialType, ApiProperty } from '@nestjs/swagger';
 export class CreateUserDto {
   @IsString()
   @IsEmail()
+  @IsNotEmpty()
   @ApiProperty({ description: 'The email of User', default: 'test@gmail.com' })
   readonly email: string;
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: 'The name of User', default: 'Jeancarlo Willy' })
   readonly name: string;
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({ description: 'The name of User', default: 'Mamani Lingan' })
   readonly lastname: string;
 
   @IsString()
+  @IsNotEmpty()
   @IsPhoneNumber('PE')
   @ApiProperty({ description: 'The phone of User', default: '+51 946242945' })
   readonly phone: string;

@@ -4,17 +4,17 @@ import { CreateUserDto } from '../dtos/user.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')
-@Controller('/users')
+@Controller('api/users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() user: CreateUserDto) {
     return this.usersService.create(user);
   }
 
   @Get()
   findAll() {
-    return 'this.usersService.findAll()';
+    return this.usersService.list();
   }
 }

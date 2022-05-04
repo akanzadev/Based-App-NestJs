@@ -8,12 +8,12 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      // forbidNonWhitelisted: true,
     }),
   );
   const config = new DocumentBuilder()
     .setTitle('API')
-    .setDescription('Monokuma Store')
+    .setDescription('Monokuma Backend API')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

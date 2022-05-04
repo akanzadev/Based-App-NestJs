@@ -15,6 +15,8 @@ export class UsersService {
   async create(user: CreateUserDto) {
     const emailIsUnique = await this.emailIsUnique(user.email);
     if (!emailIsUnique) throw new BadRequestException('Email already exists');
+    const phoneIsUnique = await this.phoneIsUnique(user.phone);
+    if (!phoneIsUnique) throw new BadRequestException('Phone already in use');
     const newUser = this.userRepo.create(user);
     return this.userRepo.save(newUser);
   }
@@ -24,9 +26,18 @@ export class UsersService {
     return !user;
   }
 
+  private async phoneIsUnique(phone: string): Promise<boolean> {
+    const user = await this.userRepo.findOne({ phone });
+    return !user;
+  }
+
   async findOne(id: number): Promise<User> {
     const user = await this.userRepo.findOne(id);
     if (!user) throw new NotFoundException(`User #${id} not found`);
     return user;
+  }
+
+  list(): Promise<User[]> {
+    return this.userRepo.find();
   }
 }
