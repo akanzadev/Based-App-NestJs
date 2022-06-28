@@ -1,7 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import config from 'src/config';
+import { User, Role, RoleToUser } from './entities/users';
 
 @Global()
 @Module({
@@ -17,11 +19,13 @@ import config from 'src/config';
           username: user,
           password,
           database: dbName,
-          synchronize: true,
+          synchronize: false,
+          logging: true,
           autoLoadEntities: true,
         };
       },
     }),
+    TypeOrmModule.forFeature([User, Role, RoleToUser]),
   ],
   exports: [TypeOrmModule],
   providers: [],

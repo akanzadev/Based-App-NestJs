@@ -1,7 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { DateAt } from './dateAt.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
-@Entity()
+import { DateAt } from '../../../common/entities/dateAt.entity';
+import { RoleToUser } from './role-to-user.entity';
+
+@Entity({ name: 'users' })
 export class User extends DateAt {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,6 +24,10 @@ export class User extends DateAt {
   @Column({ type: 'varchar', length: 255, nullable: true })
   image: string;
 
-  @Column({ type: 'varchar', length: 90, nullable: false })
+  @Exclude()
+  @Column({ type: 'varchar', length: 90 })
   password: string;
+
+  @OneToMany(() => RoleToUser, (roleToUser) => roleToUser.user)
+  roleToUser: RoleToUser[];
 }

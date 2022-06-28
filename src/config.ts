@@ -2,9 +2,6 @@ import { registerAs } from '@nestjs/config';
 
 export default registerAs('config', () => {
   return {
-    server: {
-      port: process.env.DATABASE_PORT,
-    },
     mysql: {
       dbName: process.env.MYSQL_DATABASE,
       port: parseInt(process.env.MYSQL_PORT, 10),
@@ -12,6 +9,9 @@ export default registerAs('config', () => {
       user: process.env.MYSQL_USER,
       host: process.env.MYSQL_HOST,
     },
-    apiKey: process.env.API_KEY,
+    jwt: {
+      expiration: process.env.ACCESS_TOKEN_EXPIRATION,
+      secret: process.env.ACCESS_TOKEN_SECRET,
+    },
   };
 });

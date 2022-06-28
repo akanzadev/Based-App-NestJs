@@ -5,30 +5,22 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { CreateUserDto } from '../dtos/user.dto';
+import * as bcrypt from 'bcrypt';
+
+import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
+import { User } from '../../database/entities/users';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async create(user: CreateUserDto) {
-    const emailIsUnique = await this.emailIsUnique(user.email);
-    if (!emailIsUnique) throw new BadRequestException('Email already exists');
-    const phoneIsUnique = await this.phoneIsUnique(user.phone);
-    if (!phoneIsUnique) throw new BadRequestException('Phone already in use');
+    await this.validateEmailUnique(user.email);
+    await this.validatePhoneUnique(user.phone);
     const newUser = this.userRepo.create(user);
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
     return this.userRepo.save(newUser);
-  }
-
-  private async emailIsUnique(email: string): Promise<boolean> {
-    const user = await this.userRepo.findOne({ email });
-    return !user;
-  }
-
-  private async phoneIsUnique(phone: string): Promise<boolean> {
-    const user = await this.userRepo.findOne({ phone });
-    return !user;
   }
 
   async findOne(id: number): Promise<User> {
@@ -37,7 +29,41 @@ export class UsersService {
     return user;
   }
 
-  list(): Promise<User[]> {
-    return this.userRepo.find();
+  async findAll() {
+    const users = await this.userRepo.find();
+    if (users.length === 0) throw new NotFoundException('No users found');
+    return users;
+  }
+
+  async update(id: number, changes: UpdateUserDto) {
+    const user = await this.validateNotFound(id);
+    if (changes.email) await this.validateEmailUnique(changes.email);
+    if (changes.phone) await this.validatePhoneUnique(changes.phone);
+    await this.userRepo.merge(user, changes);
+    return this.userRepo.save(user);
+  }
+
+  async remove(id: number) {
+    const user = await this.validateNotFound(id);
+    await this.userRepo.remove(user);
+    return {
+      message: `User #${id} deleted`,
+    };
+  }
+
+  private async validateNotFound(id: number) {
+    const user = await this.userRepo.findOne(id);
+    if (!user) throw new NotFoundException(`User #${id} not found`);
+    return user;
+  }
+
+  private async validateEmailUnique(email: string) {
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (user) throw new BadRequestException(`${email} is already registered`);
+  }
+
+  private async validatePhoneUnique(phone: string) {
+    const user = await this.userRepo.findOne({ where: { phone } });
+    if (user) throw new BadRequestException(`${phone} is already registered`);
   }
 }

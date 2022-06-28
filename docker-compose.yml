@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   mysql:
-    container_name: mysql-container
+    container_name: mysql-container-delivery-app
     image: mysql:5
     restart: unless-stopped
     environment:
@@ -15,7 +15,7 @@ services:
       - ./mysql_data:/var/lib/mysql
 
   phpmyadmin:
-    container_name: phpmyadmin-container
+    container_name: phpmyadmin-container-delivery-app
     image: phpmyadmin/phpmyadmin
     environment:
       PMA_ARBITRARY: 1

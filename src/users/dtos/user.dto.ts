@@ -4,8 +4,9 @@ import {
   IsEmail,
   Length,
   IsPhoneNumber,
+  IsUrl,
 } from 'class-validator';
-import { PartialType, ApiProperty } from '@nestjs/swagger';
+import { PartialType, ApiProperty, OmitType } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @IsString()
@@ -32,12 +33,24 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsUrl()
+  @ApiProperty({
+    description: 'The Image of User',
+    default:
+      'https://www.google.com/img/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+  })
+  readonly image: string;
+
+  @IsString()
+  @IsNotEmpty()
   @Length(6)
   @ApiProperty({
     description: 'The password of User',
-    default: 'contraseñasegura',
+    default: 'contraseña segura',
   })
   readonly password: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto extends PartialType(
+  OmitType(CreateUserDto, ['password']),
+) {}
