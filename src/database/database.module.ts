@@ -15,7 +15,7 @@ import { User, Role, RoleToUser } from './entities/users';
           mysql: { dbName, host, password, port, user, url },
           scope: { nodeEnv },
         } = configService;
-        if (nodeEnv === 'development') {
+        if (nodeEnv === 'production') {
           return {
             type: 'mysql',
             url,
