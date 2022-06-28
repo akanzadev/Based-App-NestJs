@@ -42,3 +42,6 @@ production.env
 
 # DATA DOCKER
 mysql_data/
+
+# ORM CONFIG
+ormconfig.env
