@@ -12,21 +12,32 @@ import { User, Role, RoleToUser } from './entities/users';
       inject: [config.KEY],
       useFactory: async (configService: ConfigType<typeof config>) => {
         const {
-          mysql: { dbName, host, password, port, user },
+          mysql: { dbName, host, password, port, user, url },
           scope: { nodeEnv },
         } = configService;
-        return {
-          type: 'mysql',
-          host,
-          port,
-          username: user,
-          password,
-          database: dbName,
-          synchronize: false,
-          logging: false,
-          autoLoadEntities: true,
-          ssl: nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
-        };
+        if (nodeEnv === 'development') {
+          return {
+            type: 'mysql',
+            url,
+            synchronize: false,
+            logging: false,
+            autoLoadEntities: true,
+            ssl: { rejectUnauthorized: false },
+          };
+        } else {
+          return {
+            type: 'mysql',
+            host,
+            port,
+            username: user,
+            password,
+            database: dbName,
+            synchronize: false,
+            logging: false,
+            autoLoadEntities: true,
+            ssl: false,
+          };
+        }
       },
     }),
     TypeOrmModule.forFeature([User, Role, RoleToUser]),
