@@ -11,8 +11,16 @@ import { User, Role, RoleToUser } from './entities/users';
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
       useFactory: async (configService: ConfigType<typeof config>) => {
-        const { dbName, host, password, port, user } = configService.mysql;
+        const { dbName, host, password, port, user, url } = configService.mysql;
+        // Connect with DATABASE_URL env variable
         return {
+          type: 'mysql',
+          url,
+          synchronize: false,
+          logging: false,
+          autoLoadEntities: true,
+        };
+        /* return {
           type: 'mysql',
           host,
           port,
@@ -20,9 +28,9 @@ import { User, Role, RoleToUser } from './entities/users';
           password,
           database: dbName,
           synchronize: false,
-          logging: true,
+          logging: false,
           autoLoadEntities: true,
-        };
+        }; */
       },
     }),
     TypeOrmModule.forFeature([User, Role, RoleToUser]),

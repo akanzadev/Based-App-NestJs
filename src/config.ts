@@ -8,6 +8,7 @@ export default registerAs('config', () => {
       password: process.env.MYSQL_ROOT_PASSWORD,
       user: process.env.MYSQL_USER,
       host: process.env.MYSQL_HOST,
+      url: process.env.DATABASE_URL,
     },
     jwt: {
       expiration: process.env.ACCESS_TOKEN_EXPIRATION,
