@@ -24,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
         MYSQL_PORT: Joi.number(),
         MYSQL_DATABASE: Joi.string(),
         DATABASE_URL: Joi.string(),
+        NODE_ENV: Joi.string().valid('development', 'production'),
         ACCESS_TOKEN_SECRET: Joi.string().required(),
         ACCESS_TOKEN_EXPIRATION: Joi.string().required(),
       }),

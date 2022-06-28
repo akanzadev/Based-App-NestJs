@@ -2,6 +2,9 @@ import { registerAs } from '@nestjs/config';
 
 export default registerAs('config', () => {
   return {
+    scope: {
+      nodeEnv: process.env.NODE_ENV || 'development',
+    },
     mysql: {
       dbName: process.env.MYSQL_DATABASE,
       port: parseInt(process.env.MYSQL_PORT, 10),

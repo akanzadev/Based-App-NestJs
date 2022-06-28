@@ -12,6 +12,7 @@ import { User, Role, RoleToUser } from './entities/users';
       inject: [config.KEY],
       useFactory: async (configService: ConfigType<typeof config>) => {
         const { dbName, host, password, port, user, url } = configService.mysql;
+        const { nodeEnv } = configService.scope;
         // Connect with DATABASE_URL env variable
         return {
           type: 'mysql',
@@ -19,6 +20,7 @@ import { User, Role, RoleToUser } from './entities/users';
           synchronize: false,
           logging: false,
           autoLoadEntities: true,
+          ssl: nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
         };
         /* return {
           type: 'mysql',
