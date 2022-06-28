@@ -14,25 +14,31 @@ import { User, Role, RoleToUser } from './entities/users';
         const { dbName, host, password, port, user, url } = configService.mysql;
         const { nodeEnv } = configService.scope;
         // Connect with DATABASE_URL env variable
-        return {
-          type: 'mysql',
-          url,
-          synchronize: false,
-          logging: false,
-          autoLoadEntities: true,
-          ssl: nodeEnv === 'production' ? { rejectUnauthorized: false } : false,
-        };
-        /* return {
-          type: 'mysql',
-          host,
-          port,
-          username: user,
-          password,
-          database: dbName,
-          synchronize: false,
-          logging: false,
-          autoLoadEntities: true,
-        }; */
+        let config = {};
+        if (nodeEnv === 'production') {
+          config = {
+            type: 'mysql',
+            url,
+            synchronize: false,
+            logging: false,
+            autoLoadEntities: true,
+            ssl: { rejectUnauthorized: false },
+          };
+        } else {
+          config = {
+            type: 'mysql',
+            host,
+            port,
+            username: user,
+            password,
+            database: dbName,
+            synchronize: false,
+            logging: false,
+            autoLoadEntities: true,
+            ssl: false,
+          };
+        }
+        return config;
       },
     }),
     TypeOrmModule.forFeature([User, Role, RoleToUser]),
