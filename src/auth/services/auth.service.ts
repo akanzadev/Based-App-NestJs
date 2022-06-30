@@ -17,9 +17,13 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userRepo.findOne({ where: { email } });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user) {
+      throw new UnauthorizedException('Correo o contraseña incorrectos');
+    }
     const isMatched = await bcrypt.compare(password, user.password);
-    if (!isMatched) throw new UnauthorizedException('Invalid credentials');
+    if (!isMatched) {
+      throw new UnauthorizedException('Correo o contraseña incorrectos');
+    }
     return user;
   }
 
