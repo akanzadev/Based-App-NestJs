@@ -7,8 +7,7 @@ import {
 } from 'typeorm';
 
 import { DateAt } from '../../../common/entities';
-import { Role } from './role.entity';
-import { User } from './user.entity';
+import { Role, User } from '.';
 
 @Entity('user_has_roles')
 @Unique(['role', 'user'])

@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 import { DateAt } from '../../../common/entities';
 import { RoleEnum } from '../../../auth/models';
-import { RoleToUser } from './role-to-user.entity';
+import { RoleToUser } from '.';
 
 @Entity({ name: 'roles' })
 export class Role extends DateAt {
