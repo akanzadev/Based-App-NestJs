@@ -7,16 +7,48 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { UsersService } from '../services/users.service';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/decorators';
+import { multerOptions } from '../../common/helper/multer.config';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
+
+  @ApiOperation({ summary: 'Create a user witch Image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        name: { type: 'string' },
+        lastname: { type: 'string' },
+        phone: { type: 'string' },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+        password: { type: 'string' },
+      },
+    },
+  })
+  @Post('createWithImage')
+  @UseInterceptors(FilesInterceptor('image', 1, multerOptions))
+  createWithImage(
+    @Body() user: CreateUserDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    return this.usersService.createWithImage(user, files);
+  }
 
   @ApiOperation({ summary: 'Create a user' })
   @Post('create')

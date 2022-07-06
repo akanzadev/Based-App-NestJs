@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,10 +10,14 @@ import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { User } from '../../database/entities/users';
+import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   async create(user: CreateUserDto) {
     await this.validateEmailUnique(user.email);
@@ -20,6 +25,30 @@ export class UsersService {
     const newUser = this.userRepo.create(user);
     const hashPassword = await bcrypt.hash(newUser.password, 10);
     newUser.password = hashPassword;
+    return this.userRepo.save(newUser);
+  }
+
+  async createWithImage(
+    user: CreateUserDto,
+    files: Array<Express.Multer.File>,
+  ) {
+    if (files.length === 0) throw new BadRequestException('No image uploaded');
+    await this.validateEmailUnique(user.email);
+    await this.validatePhoneUnique(user.phone);
+    const newUser = this.userRepo.create(user);
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
+    // Se creo el usuario correctamente
+    // Ahora guardaremos la imagen y se la asignaremos al usuario
+    const { secure_url } = await this.cloudinaryService.uploadImage(
+      user.email,
+      files[0],
+    );
+    console.log(
+      '🚀 ~ file: users.service.ts ~ line 44 ~ UsersService ~ secure_url',
+      secure_url,
+    );
+    newUser.image = secure_url;
     return this.userRepo.save(newUser);
   }
 

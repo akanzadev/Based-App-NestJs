@@ -5,6 +5,8 @@ import {
   Length,
   IsPhoneNumber,
   IsUrl,
+  IsOptional,
+  IsBase64,
 } from 'class-validator';
 import { PartialType, ApiProperty, OmitType } from '@nestjs/swagger';
 
@@ -31,9 +33,10 @@ export class CreateUserDto {
   @ApiProperty({ description: 'The phone of User', default: '+51 946242945' })
   readonly phone: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @IsUrl()
+  // @IsString()
+  // @IsNotEmpty()
+  @IsOptional()
+  // @IsUrl()
   @ApiProperty({
     description: 'The Image of User',
     default:
