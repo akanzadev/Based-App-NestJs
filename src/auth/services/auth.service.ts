@@ -29,15 +29,14 @@ export class AuthService {
 
   async generateJwtToken(userData: User) {
     const user = await this.validateEmail(userData.email);
-    const payload: PayloadToken = { role: 'role.name', sub: user.id };
+    const payload: PayloadToken = { id: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
-    delete user.password;
     return {
       success: true,
       message: 'El usuario fue autenticado',
       data: {
-        ...user,
-        session_token: accessToken,
+        ...userData,
+        session_token: 'JWT ' + accessToken,
       },
     };
   }

@@ -16,7 +16,11 @@ export const multerOptions: MulterOptions = {
     file: Express.Multer.File,
     cb: CallableFunction,
   ) => {
-    if (!file.mimetype.match(/^image\/(gif|jpe?g|png)$/)) {
+    if (
+      !file.mimetype.match(/^image\/(gif|jpe?g|png)$/) &&
+      // FOR FLUUTER APLICATION
+      !file.mimetype.match(/^application\/(octet-stream)$/)
+    ) {
       cb(
         new HttpException(
           `Unsupported file type ${extname(file.originalname)}`,

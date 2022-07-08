@@ -10,12 +10,14 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { User } from '../../database/entities/users';
 import { CloudinaryService } from './cloudinary.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly authService: AuthService,
   ) {}
 
   async create(user: CreateUserDto) {
@@ -24,7 +26,11 @@ export class UsersService {
     const newUser = this.userRepo.create(user);
     const hashPassword = await bcrypt.hash(newUser.password, 10);
     newUser.password = hashPassword;
-    return this.userRepo.save(newUser);
+    return {
+      success: true,
+      message: 'El registro se realizo correctamente',
+      data: await this.userRepo.save(newUser),
+    };
   }
 
   async createWithImage(
@@ -43,12 +49,9 @@ export class UsersService {
       user.email,
       files[0],
     );
-    console.log(
-      '🚀 ~ file: users.service.ts ~ line 44 ~ UsersService ~ secure_url',
-      secure_url,
-    );
     newUser.image = secure_url;
-    return this.userRepo.save(newUser);
+    const rta = await this.userRepo.save(newUser);
+    return await this.authService.generateJwtToken(rta);
   }
 
   async findOne(id: number): Promise<User> {
