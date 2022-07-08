@@ -4,9 +4,7 @@ import {
   IsEmail,
   Length,
   IsPhoneNumber,
-  IsUrl,
   IsOptional,
-  IsBase64,
 } from 'class-validator';
 import { PartialType, ApiProperty, OmitType } from '@nestjs/swagger';
 
@@ -57,3 +55,8 @@ export class CreateUserDto {
 export class UpdateUserDto extends PartialType(
   OmitType(CreateUserDto, ['password']),
 ) {}
+
+export class CreateUserWithImageDto {
+  @IsString()
+  readonly user: string;
+}

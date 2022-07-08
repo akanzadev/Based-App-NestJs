@@ -14,7 +14,11 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { UsersService } from '../services/users.service';
-import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  CreateUserWithImageDto,
+} from '../dtos/user.dto';
 import { Public } from 'src/auth/decorators';
 import { multerOptions } from '../../common/helper/multer.config';
 
@@ -44,10 +48,11 @@ export class UsersController {
   @Post('createWithImage')
   @UseInterceptors(FilesInterceptor('image', 1, multerOptions))
   createWithImage(
-    @Body() user: CreateUserDto,
+    @Body() data: CreateUserWithImageDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return this.usersService.createWithImage(user, files);
+    const parseUser = JSON.parse(data.user) as CreateUserDto;
+    return this.usersService.createWithImage(parseUser, files);
   }
 
   @ApiOperation({ summary: 'Create a user' })
